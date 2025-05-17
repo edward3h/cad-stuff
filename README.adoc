@@ -1,0 +1,8 @@
+= My CAD projects
+
+Just random CAD designs I have been working on and wanted to save.
+
+== Tools
+
+* [OpenSCAD](https://openscad.org/)
+* [BOSL2](https://github.com/BelfrySCAD/BOSL2/wiki) OpenSCAD library.
