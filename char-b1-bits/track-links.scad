@@ -34,7 +34,7 @@ module track_links(n=1) {
     ycopies(length+link_gap, n) track_link($idx == 0, $idx==(n-1));
 }
 
-track_links(10);
-right(width*1.5) ycopies(l=width*3) track_links(3);
-right(width*3) ycopies(l=width*4,n=4) track_links(2);
+track_links(11);
+right(width*1.5) ycopies(l=width*4,n=3) track_links(3);
+right(width*3) ycopies(l=width*4,n=6) track_links();
 right(width*4.5) ycopies(l=width*4,n=6) track_links();
