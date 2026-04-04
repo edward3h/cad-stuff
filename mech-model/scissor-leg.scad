@@ -70,6 +70,30 @@ module scissor_leg(
         // Short arm bottom pivot boss — anchor=BOTTOM so boss sits proud above ground (z=0 to z=boss_h)
         translate([short_arm_foot_x, 0, 0])
         cyl(h=boss_h, d=boss_dia, $fn=fn_curve, anchor=BOTTOM);
+
+        // Main pivot boss — positioned at aesthetic crossing point of the two arms
+        translate([pivot_x, 0, pivot_z]) {
+            cyl(h=1.2, d=3.0, $fn=fn_curve, anchor=BOTTOM);
+            // Hex bolt head on top
+            if (bolt_head)
+                translate([0, 0, 1.2])
+                cyl(h=0.6, d=2.5, $fn=fn_hex, anchor=BOTTOM);
+        }
+
+        // Gusset plate — thin triangular fin at the pivot point, facing XZ plane
+        // polygon Y-axis becomes Z after rotate([90,0,0]):
+        //   base at pivot_z-2mm, tip at pivot_z+2mm
+        translate([pivot_x, 0, pivot_z])
+        rotate([90, 0, 0])
+        linear_extrude(height=0.6, center=true)
+        polygon([[-2.5, -2], [2.5, -2], [0, 2]]);
+
+        // Foot bar — spans between the two bottom pivots with overhang each side
+        translate([foot_bar_cx, 0, 0])
+        cuboid([foot_bar_len, 3.0, 1.2],
+               rounding=0.4, edges=[LEFT+FRONT, LEFT+BACK, RIGHT+FRONT, RIGHT+BACK],
+               anchor=CENTER);
+
     }
 }
 
