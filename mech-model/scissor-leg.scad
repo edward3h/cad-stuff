@@ -27,6 +27,9 @@ module scissor_leg(
     foot_bar_len      = foot_bar_span + 2 * foot_bar_overhang;
     foot_bar_cx       = (long_arm_foot_x + short_arm_foot_x) / 2;
 
+    // pivot_frac: aesthetic position along long arm (not a true geometric intersection;
+    // both arms diverge from the hub so do not cross). Edit this constant directly
+    // to reposition the boss after first visual check.
     pivot_frac = 0.55;
     pivot_x = pivot_frac * long_arm_len * sin(long_arm_angle);
     pivot_z = height - pivot_frac * long_arm_len * cos(long_arm_angle);
