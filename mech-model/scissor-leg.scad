@@ -1,0 +1,50 @@
+include <BOSL2/std.scad>
+
+$fn = 32;
+
+module scissor_leg(
+    height            = 25,
+    long_arm_angle    = 18,
+    short_arm_angle   = 14,
+    long_arm_width    = 2.5,
+    long_arm_thick    = 1.0,
+    short_arm_dia     = 1.8,
+    lean_angle        = 5,
+    foot_bar_overhang = 1.5,
+    hub_dia           = 8.0,
+    hub_thick         = 1.5,
+    bolt_head         = true,
+    fn_curve          = 32,
+    fn_hex            = 6
+) {
+    // --- Derived values ---
+    long_arm_len  = height / cos(long_arm_angle);
+    short_arm_len = height / cos(short_arm_angle);
+
+    long_arm_foot_x   =  long_arm_len  * sin(long_arm_angle);
+    short_arm_foot_x  = -short_arm_len * sin(short_arm_angle);
+    foot_bar_span     = long_arm_foot_x - short_arm_foot_x;
+    foot_bar_len      = foot_bar_span + 2 * foot_bar_overhang;
+    foot_bar_cx       = (long_arm_foot_x + short_arm_foot_x) / 2;
+
+    pivot_frac = 0.55;
+    pivot_x = pivot_frac * long_arm_len * sin(long_arm_angle);
+    pivot_z = height - pivot_frac * long_arm_len * cos(long_arm_angle);
+
+    echo("long_arm_len",  long_arm_len);
+    echo("short_arm_len", short_arm_len);
+    echo("foot_bar_span", foot_bar_span);
+    echo("foot_bar_len",  foot_bar_len);
+    echo("foot_bar_cx",   foot_bar_cx);
+    echo("pivot_x",       pivot_x);
+    echo("pivot_z",       pivot_z);
+
+    rotate([0, lean_angle, 0])
+    union() {
+        // Hub disc — bottom face at z=height, top face at z=height+hub_thick
+        translate([0, 0, height])
+        cyl(h=hub_thick, d=hub_dia, $fn=fn_curve, anchor=BOTTOM);
+    }
+}
+
+scissor_leg();
