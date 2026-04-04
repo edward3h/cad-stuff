@@ -18,6 +18,8 @@ module scissor_leg(
     boss_dia          = 2.5,
     pivot_boss_h      = 1.2,
     pivot_boss_dia    = 3.0,
+    bolt_head_h       = 0.6,
+    bolt_head_dia     = 2.5,
     foot_bar_depth    = 3.0,
     foot_bar_thick    = 1.2,
     gusset_thick      = 0.6,
@@ -41,13 +43,14 @@ module scissor_leg(
     pivot_x = pivot_frac * long_arm_len * sin(long_arm_angle);
     pivot_z = height - pivot_frac * long_arm_len * cos(long_arm_angle);
 
-    echo("long_arm_len",  long_arm_len);
-    echo("short_arm_len", short_arm_len);
-    echo("foot_bar_span", foot_bar_span);
-    echo("foot_bar_len",  foot_bar_len);
-    echo("foot_bar_cx",   foot_bar_cx);
-    echo("pivot_x",       pivot_x);
-    echo("pivot_z",       pivot_z);
+    // Uncomment to verify derived values during development:
+    // echo("long_arm_len",  long_arm_len);   // ~26.3
+    // echo("short_arm_len", short_arm_len);  // ~25.7
+    // echo("foot_bar_span", foot_bar_span);  // ~14.3
+    // echo("foot_bar_len",  foot_bar_len);   // ~17.3
+    // echo("foot_bar_cx",   foot_bar_cx);    // ~0.95
+    // echo("pivot_x",       pivot_x);        // ~4.5
+    // echo("pivot_z",       pivot_z);        // ~11.2
 
     rotate([0, lean_angle, 0])
     union() {
@@ -82,7 +85,7 @@ module scissor_leg(
             // Hex bolt head on top
             if (bolt_head)
                 translate([0, 0, pivot_boss_h])
-                cyl(h=0.6, d=2.5, $fn=fn_hex, anchor=BOTTOM);
+                cyl(h=bolt_head_h, d=bolt_head_dia, $fn=fn_hex, anchor=BOTTOM);
         }
 
         // Gusset plate — thin triangular fin at the pivot point, facing XZ plane
@@ -92,7 +95,7 @@ module scissor_leg(
         translate([pivot_x, 0, pivot_z])
         rotate([90, 0, 0])
         linear_extrude(height=gusset_thick, center=true)
-        polygon([[-2.5, -2], [2.5, -2], [0, 2]]);
+        polygon([[-2.5, -2], [2.5, -2], [0, 2]]);  // half-width 2.5mm, base -2mm, tip +2mm relative to pivot
 
         // Foot bar — spans between the two bottom pivots with overhang each side
         translate([foot_bar_cx, 0, 0])

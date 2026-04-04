@@ -26,7 +26,7 @@ In this scissor configuration both arms share the same top connection (hub disc)
   - Long arm bottom end: 26.3 × sin(18°) ≈ 8.1mm forward of hub centre
   - Short arm bottom end: 25.7 × sin(14°) ≈ 6.2mm behind hub centre
   - Derived foot bar span between pivot centres: ~14.3mm
-- **Arm crossing point (where pivot boss sits):** computed as the intersection of the two arm lines in the X–Y plane. At the default angles this falls approximately 55% down the long arm (from hub end), but this is a derived value, not a parameter.
+- **Arm crossing point (where pivot boss sits):** both arms start from the hub centre and diverge downward — they form a V shape and do not geometrically cross. The pivot boss is therefore placed at an *aesthetic* position: `pivot_frac = 0.55` of the long arm length from the hub. This constant is a local variable in the module source; adjust it by eye after first preview.
 - **`lean_angle`:** a rigid-body rotation applied to the entire assembled leg. The rotation axis passes through the hub centre parallel to the X-axis (i.e., the leg tips in the front-back/side-view plane). At the default value of 5° the foot contact point shifts slightly forward and the leg looks characteristically off-plumb. Set to 0 for a perfectly vertical leg.
 
 These are starting-point values. Adjust `long_arm_angle` and `short_arm_angle` in the module to taste once the model is visible in OpenSCAD — arm lengths and the crossing point are derived automatically.
