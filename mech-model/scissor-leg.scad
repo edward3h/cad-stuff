@@ -47,6 +47,27 @@ module scissor_leg(
         // Hub disc — bottom face at z=height, top face at z=height+hub_thick
         translate([0, 0, height])
         cyl(h=hub_thick, d=hub_dia, $fn=fn_curve, anchor=BOTTOM);
+
+        // Long arm — flat bar, leans in +X direction
+        // rotate([0, -angle, 0]) around Y axis leans the arm toward +X
+        translate([0, 0, height])
+        rotate([0, -long_arm_angle, 0])
+        cuboid([long_arm_width, long_arm_thick, long_arm_len],
+               rounding=0.3, edges="Z",
+               anchor=TOP);
+
+        // Short arm — solid round rod, leans in -X direction
+        translate([0, 0, height])
+        rotate([0, short_arm_angle, 0])
+        cyl(h=short_arm_len, d=short_arm_dia, $fn=fn_curve, anchor=TOP);
+
+        // Long arm bottom pivot boss — anchor=BOTTOM so boss sits proud above ground (z=0 to z=0.8)
+        translate([long_arm_foot_x, 0, 0])
+        cyl(h=0.8, d=2.5, $fn=fn_curve, anchor=BOTTOM);
+
+        // Short arm bottom pivot boss
+        translate([short_arm_foot_x, 0, 0])
+        cyl(h=0.8, d=2.5, $fn=fn_curve, anchor=BOTTOM);
     }
 }
 
