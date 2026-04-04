@@ -16,6 +16,11 @@ module scissor_leg(
     bolt_head         = true,
     boss_h            = 0.8,
     boss_dia          = 2.5,
+    pivot_boss_h      = 1.2,
+    pivot_boss_dia    = 3.0,
+    foot_bar_depth    = 3.0,
+    foot_bar_thick    = 1.2,
+    gusset_thick      = 0.6,
     fn_curve          = 32,
     fn_hex            = 6
 ) {
@@ -73,24 +78,25 @@ module scissor_leg(
 
         // Main pivot boss — positioned at aesthetic crossing point of the two arms
         translate([pivot_x, 0, pivot_z]) {
-            cyl(h=1.2, d=3.0, $fn=fn_curve, anchor=BOTTOM);
+            cyl(h=pivot_boss_h, d=pivot_boss_dia, $fn=fn_curve, anchor=BOTTOM);
             // Hex bolt head on top
             if (bolt_head)
-                translate([0, 0, 1.2])
+                translate([0, 0, pivot_boss_h])
                 cyl(h=0.6, d=2.5, $fn=fn_hex, anchor=BOTTOM);
         }
 
         // Gusset plate — thin triangular fin at the pivot point, facing XZ plane
         // polygon Y-axis becomes Z after rotate([90,0,0]):
         //   base at pivot_z-2mm, tip at pivot_z+2mm
+        // gusset_thick is marginal at 0.6mm (3 perimeters at 0.2mm nozzle); increase to 0.8 if needed
         translate([pivot_x, 0, pivot_z])
         rotate([90, 0, 0])
-        linear_extrude(height=0.6, center=true)
+        linear_extrude(height=gusset_thick, center=true)
         polygon([[-2.5, -2], [2.5, -2], [0, 2]]);
 
         // Foot bar — spans between the two bottom pivots with overhang each side
         translate([foot_bar_cx, 0, 0])
-        cuboid([foot_bar_len, 3.0, 1.2],
+        cuboid([foot_bar_len, foot_bar_depth, foot_bar_thick],
                rounding=0.4, edges=[LEFT+FRONT, LEFT+BACK, RIGHT+FRONT, RIGHT+BACK],
                anchor=CENTER);
 
