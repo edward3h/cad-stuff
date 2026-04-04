@@ -14,6 +14,8 @@ module scissor_leg(
     hub_dia           = 8.0,
     hub_thick         = 1.5,
     bolt_head         = true,
+    boss_h            = 0.8,
+    boss_dia          = 2.5,
     fn_curve          = 32,
     fn_hex            = 6
 ) {
@@ -53,7 +55,7 @@ module scissor_leg(
         translate([0, 0, height])
         rotate([0, -long_arm_angle, 0])
         cuboid([long_arm_width, long_arm_thick, long_arm_len],
-               rounding=0.3, edges="Z",
+               rounding=0.3, edges=[LEFT+FRONT, LEFT+BACK, RIGHT+FRONT, RIGHT+BACK],
                anchor=TOP);
 
         // Short arm — solid round rod, leans in -X direction
@@ -61,13 +63,13 @@ module scissor_leg(
         rotate([0, short_arm_angle, 0])
         cyl(h=short_arm_len, d=short_arm_dia, $fn=fn_curve, anchor=TOP);
 
-        // Long arm bottom pivot boss — anchor=BOTTOM so boss sits proud above ground (z=0 to z=0.8)
+        // Long arm bottom pivot boss — anchor=BOTTOM so boss sits proud above ground (z=0 to z=boss_h)
         translate([long_arm_foot_x, 0, 0])
-        cyl(h=0.8, d=2.5, $fn=fn_curve, anchor=BOTTOM);
+        cyl(h=boss_h, d=boss_dia, $fn=fn_curve, anchor=BOTTOM);
 
-        // Short arm bottom pivot boss
+        // Short arm bottom pivot boss — anchor=BOTTOM so boss sits proud above ground (z=0 to z=boss_h)
         translate([short_arm_foot_x, 0, 0])
-        cyl(h=0.8, d=2.5, $fn=fn_curve, anchor=BOTTOM);
+        cyl(h=boss_h, d=boss_dia, $fn=fn_curve, anchor=BOTTOM);
     }
 }
 
