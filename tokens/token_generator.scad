@@ -5,12 +5,20 @@
 // 2021.01+, stable-ish in later dev snapshots):
 //   openscad --enable=textmetrics ...
 
-// Known icon SVGs and the native width/height of their viewBox, so the
-// caller can request an icon by name and a target width in mm without
-// having to know the source SVG's internal units.
+// Known icon SVGs: file, native [width, height] of their viewBox (used
+// to convert a target height in mm to a uniform scale factor), and the
+// icon's actual bounding-box center in import()'s own coordinate space.
+// That center is NOT simply native/2: OpenSCAD's SVG import doesn't
+// necessarily preserve the viewBox's own origin, so the imported
+// geometry's true bbox center has to be measured directly (e.g. via
+// `linear_extrude(1) icon_shape(name, native_height, 0);` exported to
+// STL and inspecting its bounding box) rather than assumed from the
+// viewBox dimensions alone. Using native/2 here previously left the
+// quill's true center about 24% of its height off from where it should
+// be (and the skull's about 12% off).
 function icon_lookup(name) =
-    name == "quill" ? ["icons/quill.svg", [1040, 840]] :
-    name == "skull" ? ["icons/skull.svg", [270, 366]] :
+    name == "quill" ? ["icons/quill.svg", [1040, 840], [523.2, 216.3]] :
+    name == "skull" ? ["icons/skull.svg", [270, 366], [137.5, 137.3]] :
     undef;
 
 // Sum of a numeric vector.
@@ -61,10 +69,11 @@ module icon_shape(name, height, y_offset) {
     if (icon != undef) {
         file = icon[0];
         native = icon[1];
+        center = icon[2];
         s = height / native[1];
         translate([0, y_offset, 0])
             scale([s, s])
-                translate([-native[0] / 2, -native[1] / 2, 0])
+                translate([-center[0], -center[1], 0])
                     import(file);
     }
 }
@@ -98,7 +107,7 @@ module token(
     rim_size = 3.2,
     rim_radius_frac = 0.70,
     icon_name = "quill",
-    icon_height = 17,
+    icon_height = 20,
     icon_y_frac = 0,
     font = "Bitter:style=Medium"
 ) {
