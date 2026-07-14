@@ -84,7 +84,7 @@ module token(
     center_y_frac = -0.13,
     rim_text = "Suppressed",
     rim_size = 3.2,
-    rim_radius_frac = 0.80,
+    rim_radius_frac = 0.70,
     icon_name = "quill",
     icon_width = 9,
     icon_y_frac = 0.55,
