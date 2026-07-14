@@ -51,12 +51,17 @@ module curved_text(txt, radius, size = 5, font = "Bitter:style=Medium") {
 // (observed with 2026.02.25; the icon geometry disappeared only when a
 // curved_text() call came right after a bare `if (icon != undef) {...}`
 // sibling).
-module icon_shape(name, width, y_offset) {
+// Sized by target height (Y-axis), not width: icons vary a lot in
+// aspect ratio and how much of their own bounding box they fill (e.g.
+// the skull is roughly circular so it looks "bigger" than a quill of
+// the same bounding-box height), so height is the more predictable
+// control for how large an icon reads on the token.
+module icon_shape(name, height, y_offset) {
     icon = icon_lookup(name);
     if (icon != undef) {
         file = icon[0];
         native = icon[1];
-        s = width / native[0];
+        s = height / native[1];
         translate([0, y_offset, 0])
             scale([s, s])
                 translate([-native[0] / 2, -native[1] / 2, 0])
@@ -93,7 +98,7 @@ module token(
     rim_size = 3.2,
     rim_radius_frac = 0.70,
     icon_name = "quill",
-    icon_width = 15,
+    icon_height = 17,
     icon_y_frac = 0,
     font = "Bitter:style=Medium"
 ) {
@@ -104,7 +109,7 @@ module token(
     translate([0, 0, thickness]) {
         // Icon, at a lower relief so overlapping text still reads above it.
         linear_extrude(icon_emboss_height)
-            icon_shape(icon_name, icon_width, r * icon_y_frac);
+            icon_shape(icon_name, icon_height, r * icon_y_frac);
 
         linear_extrude(emboss_height) {
             // Center text: 1-2 lines, vertically stacked, centered on

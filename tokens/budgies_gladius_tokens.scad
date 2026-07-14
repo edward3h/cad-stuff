@@ -29,7 +29,7 @@ module token_from_def(def) {
     icon_name = def[2];
     if (icon_name == "skull")
         token(center_lines = center_lines, rim_text = rim_text,
-              icon_name = icon_name, icon_width = 14, icon_y_frac = 0.05);
+              icon_name = icon_name, icon_height = 19, icon_y_frac = 0.05);
     else
         token(center_lines = center_lines, rim_text = rim_text, icon_name = icon_name);
 }
