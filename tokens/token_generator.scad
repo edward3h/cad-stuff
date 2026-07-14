@@ -74,43 +74,50 @@ module chamfered_disc(diameter, thickness, chamfer) {
 }
 
 // icon_name: "quill", "skull", or undef for no icon.
+//
+// The icon sits at icon_emboss_height (lower relief) and text/rim text
+// sit at the taller emboss_height, so where they overlap the text still
+// physically stands proud of the icon underneath it and reads clearly
+// on a single-colour print, similar to how the source SVG layers bold
+// text over a background icon.
 module token(
     diameter = 34.5,
     thickness = 3,
     chamfer = 0.6,
     emboss_height = 0.6,
+    icon_emboss_height = 0.25,
     center_lines = ["-1", "To Hit"],
     center_size = 5,
-    center_y_frac = -0.13,
+    center_y_frac = 0,
     rim_text = "Suppressed",
     rim_size = 3.2,
     rim_radius_frac = 0.70,
     icon_name = "quill",
-    icon_width = 9,
-    icon_y_frac = 0.55,
+    icon_width = 15,
+    icon_y_frac = 0,
     font = "Bitter:style=Medium"
 ) {
     r = diameter / 2;
 
     chamfered_disc(diameter, thickness, chamfer);
 
-    translate([0, 0, thickness])
-    linear_extrude(emboss_height) {
-        // Center text: 1-2 lines, vertically stacked, centered on
-        // r*center_y_frac (negative = below the disc's true center) to
-        // leave room for the icon above it.
-        n = len(center_lines);
-        line_h = center_size * 1.25;
-        for (i = [0:n-1])
-            translate([0, r * center_y_frac + (n - 1) / 2 * line_h - i * line_h, 0])
-                text(center_lines[i], size = center_size, font = font,
-                     halign = "center", valign = "center");
+    translate([0, 0, thickness]) {
+        // Icon, at a lower relief so overlapping text still reads above it.
+        linear_extrude(icon_emboss_height)
+            icon_shape(icon_name, icon_width, r * icon_y_frac);
 
-        // Icon, placed in the upper part of the disc, above the center
-        // text, scaled to icon_width mm wide.
-        icon_shape(icon_name, icon_width, r * icon_y_frac);
+        linear_extrude(emboss_height) {
+            // Center text: 1-2 lines, vertically stacked, centered on
+            // r*center_y_frac.
+            n = len(center_lines);
+            line_h = center_size * 1.25;
+            for (i = [0:n-1])
+                translate([0, r * center_y_frac + (n - 1) / 2 * line_h - i * line_h, 0])
+                    text(center_lines[i], size = center_size, font = font,
+                         halign = "center", valign = "center");
 
-        // Curved rim text.
-        curved_text(rim_text, radius = r * rim_radius_frac, size = rim_size, font = font);
+            // Curved rim text.
+            curved_text(rim_text, radius = r * rim_radius_frac, size = rim_size, font = font);
+        }
     }
 }
