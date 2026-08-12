@@ -14,8 +14,8 @@ TOKENS = [
     [["+1", "To Hit"], "Multi-Spectrum Array", "quill"],
     [["Ignore", "Cover"], "Hammerstrike", "quill"],
     [["Reroll", "Hits"], "Oath of Moment", "quill"],
-    [["Worsen", "AP by 1"], "Armour of Contempt", "quill"],
-    [["Squad", "Doctrine"], "Adaptive Strategy", "quill"],
+    // [["Worsen", "AP by 1"], "Armour of Contempt", "quill"],
+    // [["Squad", "Doctrine"], "Adaptive Strategy", "quill"],
     [[], "Battle-Shock", "skull"],
 ];
 
@@ -29,9 +29,9 @@ module token_from_def(def) {
     icon_name = def[2];
     if (icon_name == "skull")
         token(center_lines = center_lines, rim_text = rim_text,
-              icon_name = icon_name, icon_height = 19, icon_y_frac = 0.05);
+              icon_name = icon_name, icon_height = 24, icon_y_frac = -0.1, emboss_height = 0.7, icon_emboss_height = 0.5, emboss = true);
     else
-        token(center_lines = center_lines, rim_text = rim_text, icon_name = icon_name);
+        token(center_lines = center_lines, rim_text = rim_text, icon_name = icon_name, emboss_height = 0.7, icon_emboss_height = 0.4);
 }
 
 if (TOKEN_INDEX != undef) {

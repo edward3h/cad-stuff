@@ -87,13 +87,26 @@ module chamfered_disc(diameter, thickness, chamfer) {
     }
 }
 
+// 2D center text: 1-2 lines, vertically stacked, centered on
+// r*center_y_frac.
+module center_text_2d(center_lines, center_size, center_y_frac, r, font) {
+    n = len(center_lines);
+    line_h = center_size * 1.25;
+    for (i = [0:n-1])
+        translate([0, r * center_y_frac + (n - 1) / 2 * line_h - i * line_h, 0])
+            text(center_lines[i], size = center_size, font = font,
+                 halign = "center", valign = "center");
+}
+
 // icon_name: "quill", "skull", or undef for no icon.
 //
 // The icon sits at icon_emboss_height (lower relief) and text/rim text
 // sit at the taller emboss_height, so where they overlap the text still
-// physically stands proud of the icon underneath it and reads clearly
-// on a single-colour print, similar to how the source SVG layers bold
-// text over a background icon.
+// stands out relative to the icon underneath it and reads clearly on a
+// single-colour print, similar to how the source SVG layers bold text
+// over a background icon. This hierarchy holds whether the details are
+// raised above the disc (emboss = false, the default) or cut into it
+// (emboss = true).
 module token(
     diameter = 34.5,
     thickness = 3,
@@ -109,29 +122,42 @@ module token(
     icon_name = "quill",
     icon_height = 20,
     icon_y_frac = 0,
-    font = "Bitter:style=Medium"
+    font = "Bitter:style=Medium",
+    emboss = false
 ) {
     r = diameter / 2;
+    // Tiny overshoot so subtracted (engraved) cuts break cleanly through
+    // the top face instead of leaving a coplanar, z-fighting surface.
+    overshoot = 0.01;
 
-    chamfered_disc(diameter, thickness, chamfer);
+    if (!emboss) {
+        union() {
+            chamfered_disc(diameter, thickness, chamfer);
 
-    translate([0, 0, thickness]) {
-        // Icon, at a lower relief so overlapping text still reads above it.
-        linear_extrude(icon_emboss_height)
-            icon_shape(icon_name, icon_height, r * icon_y_frac);
+            translate([0, 0, thickness]) {
+                // Icon, at a lower relief so overlapping text still reads above it.
+                linear_extrude(icon_emboss_height)
+                    icon_shape(icon_name, icon_height, r * icon_y_frac);
 
-        linear_extrude(emboss_height) {
-            // Center text: 1-2 lines, vertically stacked, centered on
-            // r*center_y_frac.
-            n = len(center_lines);
-            line_h = center_size * 1.25;
-            for (i = [0:n-1])
-                translate([0, r * center_y_frac + (n - 1) / 2 * line_h - i * line_h, 0])
-                    text(center_lines[i], size = center_size, font = font,
-                         halign = "center", valign = "center");
+                linear_extrude(emboss_height) {
+                    center_text_2d(center_lines, center_size, center_y_frac, r, font);
+                    curved_text(rim_text, radius = r * rim_radius_frac, size = rim_size, font = font);
+                }
+            }
+        }
+    } else {
+        difference() {
+            chamfered_disc(diameter, thickness, chamfer);
 
-            // Curved rim text.
-            curved_text(rim_text, radius = r * rim_radius_frac, size = rim_size, font = font);
+            translate([0, 0, thickness - icon_emboss_height])
+                linear_extrude(icon_emboss_height + overshoot)
+                    icon_shape(icon_name, icon_height, r * icon_y_frac);
+
+            translate([0, 0, thickness - emboss_height])
+                linear_extrude(emboss_height + overshoot) {
+                    center_text_2d(center_lines, center_size, center_y_frac, r, font);
+                    curved_text(rim_text, radius = r * rim_radius_frac, size = rim_size, font = font);
+                }
         }
     }
 }
